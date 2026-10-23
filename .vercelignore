@@ -1,0 +1,28 @@
+# Local embedded database (never upload personal gym data)
+.data/
+
+# Local environment and Vercel project metadata
+.env
+.env*.local
+.vercel/
+
+# Build output and dependencies
+.next/
+node_modules/
+
+# Test and tooling output
+test-results/
+playwright-report/
+coverage/
+*.tsbuildinfo
+
+# Local agent/tooling files and unrelated local assets
+.agents/
+AGENTS.md
+opencode.json
+skills-lock.json
+assests/
+docs/screenshots/
+
+# Local screenshot/tooling scripts
+capture-screenshots.mjs
