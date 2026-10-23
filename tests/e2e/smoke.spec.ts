@@ -9,16 +9,10 @@ async function submitSignIn(page: Page, email: string) {
 
 async function signIn(page: Page, email: string) {
   await page.goto("/login");
-  // Let the dev server hydrate the form before submitting; a native pre-hydration
-  // submit would reload /login and drop the session cookie.
-  await page.waitForTimeout(750);
-  try {
-    await submitSignIn(page, email);
-  } catch {
-    await page.goto("/login");
-    await page.waitForTimeout(750);
-    await submitSignIn(page, email);
-  }
+  // A native submit before hydration reloads /login and drops the session cookie.
+  // Wait for the client form's explicit hydration marker instead of a fixed delay.
+  await page.locator('form[data-hydrated="true"]').waitFor();
+  await submitSignIn(page, email);
 }
 
 test.describe("FitOS smoke", () => {

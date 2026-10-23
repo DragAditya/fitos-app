@@ -25,11 +25,13 @@ export function ManualCheckInDialog({
     memberName?: string;
   } | null>(null);
 
-  async function submit(event: React.FormEvent) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const submittedMemberId = String(new FormData(event.currentTarget).get("memberId") ?? "");
+    if (!submittedMemberId) return;
     setPending(true);
     setResult(null);
-    const response = await manualCheckInAction({ memberId });
+    const response = await manualCheckInAction({ memberId: submittedMemberId });
     setPending(false);
     if (!response.ok) {
       setResult({ status: "rejected", message: response.error });
@@ -71,7 +73,13 @@ export function ManualCheckInDialog({
               </Alert>
             ) : null}
             <Field label="Member" htmlFor="manual-member">
-              <NativeSelect id="manual-member" value={memberId} onChange={(event) => setMemberId(event.target.value)} required>
+              <NativeSelect
+                id="manual-member"
+                name="memberId"
+                value={memberId}
+                onChange={(event) => setMemberId(event.target.value)}
+                required
+              >
                 <option value="">Choose a member</option>
                 {members.map((member) => (
                   <option key={member.id} value={member.id}>{member.full_name} · {member.member_code}</option>

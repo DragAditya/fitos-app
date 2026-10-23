@@ -220,10 +220,10 @@ Copy `.env.example` to `.env.local` for local development. `.env.local` is ignor
 | `npm run typecheck` | TypeScript, no emit. |
 | `npm test` | Vitest unit suite — **85 tests**. |
 | `npm run test:watch` | Vitest in watch mode. |
-| `npm run test:e2e` | Resets `.data/e2e` and runs the **8-test** Playwright smoke suite on port 3100. |
+| `npm run test:e2e` | Resets `.data/e2e` and runs the **8-test** Playwright smoke suite against a production build on port 3100. |
 | `npm run db:reset` | Delete `.data` so the next request re-creates and re-seeds the local PGlite database. It does **not** touch a managed database. |
 
-> The Playwright suite creates payments, check-ins, and notification reads. When `DATABASE_URL` is set it does not reset the managed database, so only point it at a disposable Neon branch or test database.
+> The Playwright config clears `DATABASE_URL` and runs against the isolated PGlite seed at `.data/e2e`, so the suite never touches a managed database.
 
 ---
 
@@ -330,7 +330,7 @@ npm run build
 ```
 
 - **Unit tests — 85 tests** cover calendar math and timezones, membership eligibility and progress, attendance streaks, QR token format/tamper cases, revenue rules, CSV escaping, formatting, and settings behavior.
-- **Playwright smoke tests — 8 tests** start from a fresh seed at `.data/e2e` on port 3100. They cover every owner workspace screen, the advanced settings controls, settings persistence, paused self check-in, manual check-in success/duplicate/no-membership rejection, the member portal, the QR screen, a printable receipt, and notification reads.
+- **Playwright smoke tests - 8 tests** start from a fresh seed at `.data/e2e` on port 3100 and run against a production build, so dev-server recompiles cannot interfere. They cover every owner workspace screen, the advanced settings controls, settings persistence, paused self check-in, manual check-in success/duplicate/no-membership rejection, the member portal, the QR screen, a printable receipt, and notification reads.
 - The suite runs serially (`workers: 1`) because the tests share one isolated database.
 
 Playwright downloads its browser on first run:
@@ -341,7 +341,7 @@ npx playwright install chromium
 
 ### CI
 
-The GitHub Actions workflow runs typecheck, lint, unit tests, and a production build on every push and pull request. A second job runs the Playwright suite with Chromium.
+The GitHub Actions workflow runs typecheck, lint, unit tests, and a production build on every push and pull request. A second job runs the Playwright suite with Chromium against a production build.
 
 ---
 

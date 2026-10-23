@@ -19,11 +19,14 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: `npm run dev -- --port ${PORT}`,
+    // Run the production build so the smoke suite is not affected by dev-server
+    // recompiles or Fast Refresh reloads while a test is hydrating.
+    command: `npm run build && npm run start -- --port ${PORT}`,
     url: `${BASE_URL}/api/health`,
     reuseExistingServer: false,
-    timeout: 180_000,
+    timeout: 300_000,
     env: {
+      DATABASE_URL: "",
       FITOS_DATA_DIR: ".data/e2e",
       QR_TOKEN_SECRET: "e2e-qr-secret-not-for-production-0123456789",
       NEXT_PUBLIC_APP_URL: BASE_URL,

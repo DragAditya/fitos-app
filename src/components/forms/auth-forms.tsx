@@ -56,6 +56,12 @@ function PasswordInput({ name, autoComplete = "current-password", placeholder = 
 
 export function LoginForm({ next, demoEnabled }: { next?: string; demoEnabled: boolean }) {
   const [state, formAction, pending] = React.useActionState(loginAction, null);
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  React.useEffect(() => {
+    formRef.current?.setAttribute("data-hydrated", "true");
+  }, []);
+
   return (
     <div>
       <div className="mb-7">
@@ -70,7 +76,7 @@ export function LoginForm({ next, demoEnabled }: { next?: string; demoEnabled: b
 
       {state && !state.ok ? <ErrorAlert message={state.error} /> : null}
 
-      <form action={formAction} className="space-y-4">
+      <form ref={formRef} action={formAction} data-hydrated="false" className="space-y-4">
         {next ? <input type="hidden" name="next" value={next} /> : null}
         <Field label="Email" htmlFor="email" error={state && !state.ok ? state.fieldErrors?.email?.[0] : undefined}>
           <Input id="email" name="email" type="email" autoComplete="email" placeholder="you@gym.com" required />
